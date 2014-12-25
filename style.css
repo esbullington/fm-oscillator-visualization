@@ -1,0 +1,22 @@
+svg {
+  font: 10px sans-serif;
+}
+.line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.5px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.mod.line {
+  stroke: red;
+  stroke-width: 3;
+}
+#footer {
+  margin: 10px 0 10px;
+}
+
