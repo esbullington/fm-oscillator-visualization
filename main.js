@@ -1,6 +1,6 @@
 var n = 0,
   data = [],
-  modulation_signal_data = [];
+  modulationSignalData = [];
 
 var margin = {top: 20, right: 20, bottom: 20, left: 40},
   width = 660 - margin.left - margin.right,
@@ -49,20 +49,21 @@ var path = svg.append("g")
 var path_two = svg.append("g")
   .attr("clip-path", "url(#clip)")
   .append("path")
-  .datum(modulation_signal_data)
+  .datum(modulationSignalData)
   .attr("class", "mod line")
   .attr("d", line);
 
-var sample_rate = 1000;
+var sampleRate = 1000;
 var cf = 16; // carrier frequency
 var mf = 2; // modulation frequency
 var mod_index = .5; // modulation index
-var fm_int = 0; // FM integral
+var fmIntegral = 0; // FM integral
 
 function setDefaults() {
-  sample_rate = 1000;
-  $('#sampleRateSlider').val(sample_rate);
-  $('#sampleRateValue').text(sample_rate);
+  // Have to break down and use jQuery for slider here
+  sampleRate = 1000;
+  $('#sampleRateSlider').val(sampleRate);
+  $('#sampleRateValue').text(sampleRate);
   cf = 16; // carrier frequency
   $('#carrierFrequencySlider').val(cf);
   $('#carrierFrequencyValue').text(cf);
@@ -72,28 +73,30 @@ function setDefaults() {
   mod_index = .5; // modulation index
   $('#modulationIndexSlider').val(mod_index);
   $('#modulationIndexValue').text(mod_index);
-  fm_int = 0; // FM integral
+  fmIntegral = 0; // FM integral
 }
 
 
 function tick() {
 
-  if (n > sample_rate) {
+  if (n > sampleRate) {
     return;
   }
 
   n++;
 
-  t = n / sample_rate; // time seconds
+  // Based on Python implementation at:
+  // http://arachnoid.com/phase_locked_loop/
+  t = n / sampleRate; // time seconds
   mod = Math.cos(2 * Math.PI * mf * t); // modulation
-  fm_int += mod * mod_index / sample_rate; // modulation integral
-  fm = Math.cos(2 * Math.PI * cf * (t + fm_int)); // generate FM signal
+  fmIntegral += mod * mod_index / sampleRate; // modulation integral
+  fm = Math.cos(2 * Math.PI * cf * (t + fmIntegral)); // generate FM signal
 
   data.push({
     x: t,
     y: fm
   })
-  modulation_signal_data.push({
+  modulationSignalData.push({
     x: t,
     y: mod
   })
@@ -123,9 +126,9 @@ setDefaults();
 function restart() {
   n = 0;
   data = [];
-  modulation_signal_data = [];
+  modulationSignalData = [];
   path.datum(data);
-  path_two.datum(modulation_signal_data);
+  path_two.datum(modulationSignalData);
   tick();
 }
 
@@ -134,7 +137,7 @@ var sampleRateValue = document.getElementById('sampleRateValue');
 sampleRateSlider.onchange = function(e) {
   var val = e.target.value;
   sampleRateValue.innerHTML = val;
-  sample_rate = +val > 0 ? +val : 1;
+  sampleRate = +val > 0 ? +val : 1;
   restart();
 }
 
